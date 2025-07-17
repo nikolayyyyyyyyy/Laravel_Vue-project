@@ -1,13 +1,15 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const loginData = ref({
     email: '',
     password: ''
 });
 
 const logUser = async () => {
-    const response = fetch('http://127.0.0.1:8000/api/login', {
+    const response = await fetch('http://127.0.0.1:8000/api/login', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -16,12 +18,13 @@ const logUser = async () => {
         body: JSON.stringify(loginData.value)
     });
 
+    const data = await response.json();
     if (response.ok) {
-        const data = await response.json();
-        console.log('Login successful:', data);
-    } else {
-        console.error('Login failed:', response.statusText);
+
+        localStorage.setItem('user', JSON.stringify(data));
+        router.push('/');
     }
+    localStorage.getItem('user') && console.log('User logged in:', JSON.parse(localStorage.getItem('user')));
 }
 
 </script>
