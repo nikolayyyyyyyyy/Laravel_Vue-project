@@ -1,18 +1,23 @@
 <script setup>
+import { useAuth } from '@/auth/auth'
 
-const data = JSON.parse(localStorage.getItem('user'));
+const { user } = useAuth();
+
 </script>
 
 <template>
   <nav>
     <ul>
-      <li v-if="!data">
+      <li v-if="user == null">
         <router-link to="/login">Login</router-link>
       </li>
-      <li v-if="data">
+      <li v-if="user == null">
+        <router-link to="/register">Register</router-link>
+      </li>
+      <li v-if="user !== null">
         <router-link to="/logout">Logout</router-link>
       </li>
-      <li>
+      <li v-if="user !== null">
         <router-link to="/">Home</router-link>
       </li>
     </ul>

@@ -5,20 +5,21 @@ import { useRouter } from 'vue-router';
 
 const route = useRouter();
 
-const loginData = ref({
+const registerData = ref({
+    name: '',
     email: '',
     password: ''
 });
 
 const error = ref('');
 
-const { login } = useAuth();
+const { register } = useAuth();
 
-const handleLogin = async () => {
+const handleRegister = async () => {
     error.value = '';
     try {
-        await login(loginData);
-        route.push('/');
+        await register(registerData);
+        route.push('/login');
     } catch (err) {
         error.value = err.message || 'Invalid credentials.';
     }
@@ -27,11 +28,13 @@ const handleLogin = async () => {
 </script>
 
 <template>
-    <form @submit.prevent="handleLogin" method="post">
+    <form @submit.prevent="handleRegister" method="post">
+        <label for="">Name</label>
+        <input type="name" name="name" v-model="registerData.name" /><br>
         <label for="">Email</label>
-        <input type="text" name="email" v-model="loginData.email" /> <br>
+        <input type="text" name="email" v-model="registerData.email" /> <br>
         <label for="">Password</label>
-        <input type="password" name="password" v-model="loginData.password" />
+        <input type="password" name="password" v-model="registerData.password" />
         <br>
         <p v-if="error">{{ error }}</p>
         <button type="submit">Login</button>
