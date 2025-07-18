@@ -1,7 +1,14 @@
 <script setup>
 import { useAuth } from '@/auth/auth';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const { user } = useAuth();
+
+if (user.value === null) {
+    router.push('/login');
+}
+
 </script>
 
 <template>

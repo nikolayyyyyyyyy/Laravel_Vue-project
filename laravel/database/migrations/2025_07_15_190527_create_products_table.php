@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->string('name')->unique();
             $table->decimal('price', 8, 2);
             $table->text('description')->nullable();
+            $table->bigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
