@@ -1,7 +1,6 @@
 <script setup>
-import { useAuth } from '@/auth/auth'
 
-const { user } = useAuth();
+const user = localStorage.getItem('user');
 
 </script>
 

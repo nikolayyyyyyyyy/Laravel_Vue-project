@@ -13,10 +13,10 @@ const registerData = ref({
 
 const error = ref('');
 
-const { register, user } = useAuth();
+const { register } = useAuth();
+const user = JSON.parse(localStorage.getItem('user'));
 
-
-if (user.value !== null) {
+if (user) {
     route.push('/');
 }
 

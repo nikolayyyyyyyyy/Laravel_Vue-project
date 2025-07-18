@@ -12,9 +12,10 @@ const loginData = ref({
 
 const error = ref('');
 
-const { login, user } = useAuth();
+const { login } = useAuth();
+const user = JSON.parse(localStorage.getItem('user'));
 
-if (user.value !== null) {
+if (user) {
     route.push('/');
 }
 

@@ -1,16 +1,10 @@
 <script setup>
-import { useAuth } from '@/auth/auth';
 import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import { ref } from 'vue';
 
 const router = useRouter();
-const { user, token } = useAuth();
-
-if (user.value == null) {
-    router.push('/login');
-}
-
+const user = JSON.parse(localStorage.getItem('user'));
 const allProducts = ref([]);
 
 const deleteProduct = async (id) => {
@@ -19,7 +13,7 @@ const deleteProduct = async (id) => {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': `Bearer ${token.value.token}`
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
         }
     });
 
@@ -29,6 +23,10 @@ const deleteProduct = async (id) => {
 };
 
 onMounted(async () => {
+    if (user == null) {
+        router.push('/login');
+    }
+
     const response = await fetch('http://127.0.0.1:8000/api/products', {
         method: 'GET',
         headers: {

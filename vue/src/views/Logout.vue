@@ -3,15 +3,16 @@ import { onMounted } from 'vue';
 import { useAuth } from '@/auth/auth';
 import { useRouter } from 'vue-router';
 
-const { logout, user } = useAuth();
+const { logout } = useAuth();
 const router = useRouter();
+const user = JSON.parse(localStorage.getItem('user'));
 
 onMounted(() => {
-    if (user.value == null) {
+    if (user == null) {
         router.push('/login');
+        return;
     }
     logout();
-    router.push('/login');
 });
 </script>
 

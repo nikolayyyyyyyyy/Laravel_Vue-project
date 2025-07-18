@@ -1,20 +1,17 @@
 <script setup>
-import { useAuth } from '@/auth/auth';
+import { onMounted } from 'vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
-const { user, token } = useAuth();
 
-if (user.value == null) {
-    router.push('/login');
-}
+const user = JSON.parse(localStorage.getItem('user'));
 const message = ref(null);
 
 const product = ref({
     name: '',
     price: '',
     description: '',
-    user_id: user.value.id
+    user_id: user ? user.id : null
 });
 
 const createProduct = async (product) => {
@@ -23,7 +20,7 @@ const createProduct = async (product) => {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token.value.token}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify(product)
     });
@@ -37,6 +34,13 @@ const createProduct = async (product) => {
         message.value = "Failed to create Product. Please try again.";
     }
 }
+
+onMounted(() => {
+    if (user == null) {
+        router.push('/login');
+        return;
+    }
+});
 </script>
 
 <template>

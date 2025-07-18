@@ -1,14 +1,16 @@
 <script setup>
-import { useAuth } from '@/auth/auth';
 import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
 
 const router = useRouter();
-const { user } = useAuth();
+const user = JSON.parse(localStorage.getItem('user'));
 
-if (user.value === null) {
-    router.push('/login');
-}
-
+onMounted(() => {
+    if (user === null) {
+        router.push('/login');
+        return;
+    }
+});
 </script>
 
 <template>

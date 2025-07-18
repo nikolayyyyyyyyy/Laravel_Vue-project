@@ -1,3 +1,4 @@
+import router from '@/router';
 import { ref } from 'vue';
 
 const user = ref(null);
@@ -17,8 +18,8 @@ const register = async (registerData) => {
         const data = await res.json();
         throw new Error(data.value);
     }
-
-    token.value = await res.json();
+    const data = await res.json();
+    localStorage.setItem('token', data.token);
 };
 
 const login = async (loginData) => {
@@ -34,8 +35,8 @@ const login = async (loginData) => {
         const data = await res.json();
         throw new Error(data.value);
     }
-
-    token.value = await res.json();
+    const data = await res.json();
+    localStorage.setItem('token', data.token);
     await getUser();
 };
 
@@ -45,14 +46,15 @@ const getUser = async () => {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': `Bearer ${token.value.token}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
     });
 
     if (res.ok) {
-        user.value = await res.json();
-    } else {
-        user.value = null;
+        const user = await res.json();
+        localStorage.setItem('user', JSON.stringify(user));
+        router.push('/');
+        window.location.reload();
     }
 };
 
@@ -62,12 +64,15 @@ const logout = async () => {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': `Bearer ${token.value.token}`
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
     });
 
-    user.value = null;
-    token.value = null;
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+    router.push('/login');
+    window.location.reload();
 };
 
 export function useAuth() {
