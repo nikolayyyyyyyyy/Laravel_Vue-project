@@ -5,7 +5,7 @@ import Logout from '@/views/Logout.vue';
 import RegisterView from '@/views/RegisterView.vue';
 import CreateProductView from '@/views/CreateProductView.vue';
 import AllProductsView from '@/views/AllProductsView.vue';
-import UpdateProductView from '@/views/UpdateProductView.vue';
+import AllPlansView from '@/views/AllPlansView.vue';
 
 const routes = [
     { path: '/', component: HomeView },
@@ -14,7 +14,7 @@ const routes = [
     { path: '/register', component: RegisterView },
     { path: '/create', component: CreateProductView },
     { path: '/products', component: AllProductsView },
-    { path: '/products/:id/update', component: UpdateProductView }
+    { path: '/plans', component: AllPlansView }
 ];
 
 

@@ -25,6 +25,9 @@ const user = localStorage.getItem('user');
       <li v-if="user !== null">
         <router-link to="/products">Products</router-link>
       </li>
+      <li v-if="user !== null">
+        <router-link to="/plans">Plans</router-link>
+      </li>
     </ul>
   </nav>
   <br>

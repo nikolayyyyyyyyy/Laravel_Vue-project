@@ -34,17 +34,32 @@ const getAllProducts = async () => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
     });
     const products = await response.json();
     return products;
 };
 
+const getAllPlans = async () => {
+    const response = await fetch('http://127.0.0.1:8000/api/plans', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+    });
+    const plans = await response.json();
+    return plans;
+};
+
 export function crud() {
     return {
         createProduct,
         deleteProduct,
-        getAllProducts
+        getAllProducts,
+        getAllPlans
     }
 }
