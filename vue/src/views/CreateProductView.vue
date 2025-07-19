@@ -2,10 +2,16 @@
 import { onMounted } from 'vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { crud } from '@/auth/crud'
+const { createProduct } = crud();
 const router = useRouter();
 
 const user = JSON.parse(localStorage.getItem('user'));
 const message = ref(null);
+const errors = ref({
+    name: [],
+    price: []
+});
 
 const product = ref({
     name: '',
@@ -14,26 +20,22 @@ const product = ref({
     user_id: user ? user.id : null
 });
 
-const createProduct = async (product) => {
-    const response = await fetch('http://127.0.0.1:8000/api/products', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(product)
-    });
-
-    if (response.ok) {
-        product.name = '';
-        product.price = '';
-        product.description = '';
-        message.value = "Successfully created Product."
-    } else {
-        message.value = "Failed to create Product. Please try again.";
+const handleCreateProduct = async () => {
+    try {
+        await createProduct(product.value);
+        product.value.name = '';
+        product.value.price = '';
+        product.value.description = '';
+        errors.value = {
+            name: [],
+            price: []
+        };
+        message.value = 'Succesfully created Product.';
+    } catch (err) {
+        errors.value = JSON.parse(err.message);
+        message.value = '';
     }
-}
+};
 
 onMounted(() => {
     if (user == null) {
@@ -45,11 +47,13 @@ onMounted(() => {
 
 <template>
     <div class="create-product-form">
-        <form method="post" @submit.prevent="createProduct(product)">
+        <form method="post" @submit.prevent="handleCreateProduct">
             <label>Name</label>
             <input type="text" name="name" v-model="product.name" required>
+            <p class="error" v-if="errors.name">{{ errors.name[0] }}</p>
             <label>Price</label>
             <input type="number" name="price" v-model="product.price">
+            <p class="error" v-if="errors.price">{{ errors.price[0] }}</p>
             <label>Description</label>
             <textarea rows="4" name="description" v-model="product.description"></textarea>
             <button type="submit">Create</button>
@@ -60,6 +64,18 @@ onMounted(() => {
 </template>
 
 <style scoped>
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.error {
+    color: red;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    text-align: center;
+}
+
 .message {
     color: green;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;

@@ -12,11 +12,11 @@ const register = async (registerData) => {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         },
-        body: JSON.stringify(registerData.value),
+        body: JSON.stringify(registerData),
     });
     if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.value);
+        const errors = await res.json();
+        throw new Error(JSON.stringify(errors.errors));
     }
     const data = await res.json();
     localStorage.setItem('token', data.token);
@@ -29,11 +29,11 @@ const login = async (loginData) => {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         },
-        body: JSON.stringify(loginData.value),
+        body: JSON.stringify(loginData),
     });
     if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.value);
+        const errors = await res.json();
+        throw new Error(JSON.stringify(errors));
     }
     const data = await res.json();
     localStorage.setItem('token', data.token);

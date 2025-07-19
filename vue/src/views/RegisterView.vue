@@ -4,14 +4,16 @@ import { useAuth } from '@/auth/auth.js';
 import { useRouter } from 'vue-router';
 
 const route = useRouter();
-
+const errors = ref({
+    name: '',
+    email: '',
+    password: ''
+});
 const registerData = ref({
     name: '',
     email: '',
     password: ''
 });
-
-const error = ref('');
 
 const { register } = useAuth();
 const user = JSON.parse(localStorage.getItem('user'));
@@ -21,12 +23,11 @@ if (user) {
 }
 
 const handleRegister = async () => {
-    error.value = '';
     try {
-        await register(registerData);
+        await register(registerData.value);
         route.push('/login');
     } catch (err) {
-        error.value = err.message || 'Invalid credentials.';
+        errors.value = JSON.parse(err.message);
     }
 };
 
@@ -36,19 +37,32 @@ const handleRegister = async () => {
     <div class="register-form">
         <form @submit.prevent="handleRegister" method="post">
             <label for="">Name</label>
-            <input type="name" name="name" v-model="registerData.name" /><br>
+            <input type="name" name="name" v-model="registerData.name" />
+            <p class="error" v-if="errors.name">{{ errors.name[0] }}</p>
             <label for="">Email</label>
-            <input type="text" name="email" v-model="registerData.email" /> <br>
+            <input type="text" name="email" v-model="registerData.email" />
+            <p class="error" v-if="errors.email">{{ errors.email[0] }}</p>
             <label for="">Password</label>
             <input type="password" name="password" v-model="registerData.password" />
-            <br>
-            <p v-if="error">{{ error }}</p>
+            <p class="error" v-if="errors.password">{{ errors.password[0] }}</p>
             <button type="submit">Register</button>
         </form>
     </div>
 </template>
 
 <style scoped>
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.error {
+    color: red;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    text-align: center;
+}
+
 .register-form {
     max-width: 600px;
     margin: auto;

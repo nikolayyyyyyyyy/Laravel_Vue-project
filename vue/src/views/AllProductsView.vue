@@ -2,43 +2,27 @@
 import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import { ref } from 'vue';
+import { crud } from '@/auth/crud';
 
+const { deleteProduct, getAllProducts } = crud();
 const router = useRouter();
 const user = JSON.parse(localStorage.getItem('user'));
 const allProducts = ref([]);
 
-const deleteProduct = async (id) => {
-    const response = await fetch(`http://127.0.0.1:8000/api/products/${id}/delete`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        }
-    });
-
-    if (response.ok) {
-        window.location.reload();
-    }
+const handleDelete = async (id) => {
+    await deleteProduct(id);
+    window.location.reload();
 };
 
 onMounted(async () => {
     if (user == null) {
         router.push('/login');
+        return;
     }
 
-    const response = await fetch('http://127.0.0.1:8000/api/products', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    });
-    if (response.ok) {
-
-        allProducts.value = await response.json();
-    } else {
-
+    try {
+        allProducts.value = await getAllProducts();
+    } catch (err) {
         allProducts.value = [];
     }
 });
@@ -50,7 +34,7 @@ onMounted(async () => {
             <h2>Name: {{ product.name }}</h2>
             <p>Description: {{ product.description }}</p>
             <p>Price: ${{ product.price }}</p>
-            <button class="delete-btn" @click="deleteProduct(product.id)"
+            <button class="delete-btn" @click="handleDelete(product.id)"
                 v-if="product.user_id == user.id">Delete</button>
         </div>
     </div>
