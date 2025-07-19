@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->foreign('plan_id')->references('id')->on('plans');
             $table->bigInteger('role_id');
             $table->foreign('role_id')->references('id')->on('roles');
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
