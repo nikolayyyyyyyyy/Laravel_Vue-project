@@ -13,4 +13,9 @@ class Plan extends Model
         'price',
         'plan_stripe_id'
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

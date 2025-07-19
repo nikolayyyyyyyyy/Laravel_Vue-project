@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\ProductApi;
 use App\Http\Controllers\AuthController;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return $request->user()->load('plan', 'role');
 })->middleware('auth:sanctum');
 
 Route::post('/register', [AuthController::class, 'register']);
