@@ -24,10 +24,31 @@ class ProductApi extends Controller
         $request->validate([
             'name' => 'required|string|max:255|min:2',
             'price' => 'required|numeric',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'photo_path' => 'nullable|file|mimes:jpg,jpeg,png,gif|max:2048',
+            'video_path' => 'nullable|file|mimes:mp4,mov,avi,wmv|max:1000000',
         ]);
 
-        return response()->json(Product::create($request->input()), 201);
+        $photo_path = null;
+        if ($request->hasFile('photo_path')) {
+            $photo_path = $request->file('photo_path')->store('photos', 'public');
+        }
+
+        $video_path = null;
+        if ($request->hasFile('video_path')) {
+            $video_path = $request->file('video_path')->store('videos', 'public');
+        }
+
+        $product = Product::create([
+            'name' => $request->input('name'),
+            'price' => $request->input('price'),
+            'description' => $request->input('description'),
+            'user_id' => $request->input('user_id'),
+            'photo_path' => $photo_path,
+            'video_path' => $video_path
+        ]);
+
+        return response()->json($product, 201);
     }
 
     /**

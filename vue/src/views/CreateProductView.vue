@@ -17,15 +17,34 @@ const product = ref({
     name: '',
     price: '',
     description: '',
-    user_id: user ? user.id : null
+    user_id: user ? user.id : null,
+    photo_path: '',
+    video_path: ''
 });
 
 const handleCreateProduct = async () => {
     try {
-        await createProduct(product.value);
+        const formData = new FormData();
+
+        formData.append('name', product.value.name);
+        formData.append('price', product.value.price);
+        formData.append('description', product.value.description);
+        formData.append('user_id', product.value.user_id);
+
+        if (product.value.photo_path) {
+            formData.append('photo_path', product.value.photo_path);
+        }
+        if (product.value.video_path) {
+            formData.append('video_path', product.value.video_path);
+        }
+
+        await createProduct(formData);
+
         product.value.name = '';
         product.value.price = '';
         product.value.description = '';
+        product.value.photo_path = '';
+        product.value.video_path = '';
         errors.value = {
             name: [],
             price: []
@@ -36,7 +55,6 @@ const handleCreateProduct = async () => {
         message.value = '';
     }
 };
-
 onMounted(() => {
     if (user == null) {
         router.push('/login');
@@ -48,14 +66,25 @@ onMounted(() => {
 <template>
     <div class="create-product-form">
         <form method="post" @submit.prevent="handleCreateProduct">
+            <label v-if="user.plan.id == 2 || user.plan.id == 1">Photo</label>
+            <input ref="file" @change="e => product.value.photo_path = e.target.files[0]"
+                v-if="user.plan.id == 2 || user.plan.id == 1" type="file" name="photo" accept="image/*">
+
+            <label v-if="user.plan.id == 1">Video</label>
+            <input ref="file" @change="e => product.value.video_path = e.target.files[0]" v-if="user.plan.id == 1"
+                type="file" name="video" accept="video/*">
+
             <label>Name</label>
             <input type="text" name="name" v-model="product.name" required>
             <p class="error" v-if="errors.name">{{ errors.name[0] }}</p>
+
             <label>Price</label>
             <input type="number" name="price" v-model="product.price">
             <p class="error" v-if="errors.price">{{ errors.price[0] }}</p>
+
             <label>Description</label>
             <textarea rows="4" name="description" v-model="product.description"></textarea>
+
             <button type="submit">Create</button>
         </form>
 
